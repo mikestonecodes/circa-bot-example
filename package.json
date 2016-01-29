@@ -1,0 +1,16 @@
+{
+  "name": "circa-bot-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "dependencies": {
+    "sails.io.js": "^0.13.3",
+    "socket.io-client":"^1.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
