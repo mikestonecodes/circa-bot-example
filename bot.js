@@ -1,13 +1,15 @@
 
 //Settings ( find  your user token by browsing to  /botapi page )
-var token= 'jY/ddTwdUU4BsKcEtOezC1kzE9+kZ8N5drdPgEmzSFT1jaEcllKKdv083LKcitHf'
-var gameID = '56aafe40625821ce246a1c62'
+var token= ''
+var gameID = ''
 var joinAs='black'
 
 
 
 var colors={EMPTY:0,WHITE:1,BLACK:2}
-var turn = colors.BLACK;
+var yourcolor= (joinAs=='black')?2:1;
+
+var turn = yourcolor;
 var gameState='place'
 var socketIOClient = require('socket.io-client');
 var sailsIOClient = require('sails.io.js');
@@ -21,12 +23,21 @@ var moveQueue=[]; //A Queue is required so you get a response back from the serv
 
 
 begin(function(allmoves){
-	moveQueue=[	play({ring:1,hour:4}),pass() ]
+	moveQueue=[	play({ring:3,hour:1}),pass() ]
+	//  moveQueue = [play({}) ,  {game:gameID,place:'A7',from:'A5',color:2,gamestate:'sliding'}  ]
+
 		if(allmoves.length==0){ // if no one made a move yet, make a new move 
 			startQueue();
 		}
 })
 
+
+function yourturn(){
+	console.log("it is your turn!");
+	moveQueue=[	play({ring:2,hour:4}),play({ring:2,hour:1},{ring:3,hour:1})]
+	startQueue();
+	
+}
 
 function recieveUpdate(snapshot)
 {      
@@ -36,7 +47,10 @@ function recieveUpdate(snapshot)
        		//When a new move is added 
          	getLatestMove()
         }
-
+        if(snapshot.verb=='updated'&&snapshot.data.action=='moveError')
+        {
+        	console.log("Error with move",snapshot.data); 
+        }
          if(snapshot.verb=='updated'&&snapshot.data.action=='chatMessageSubmited'){
            	console.log("chatmg",snapshot.data);  
         }
@@ -89,7 +103,7 @@ function pass(cb)
 {
 	console.log("passed");
 	var data= {game:gameID,place:'pass',color:turn,gameState:gameState} ;
-	if(gameState=='slide')
+	if(gameState=='sliding')
 	{
 		//from field currently required if sliding
 
@@ -115,7 +129,7 @@ function nextMove(data)
 function updateGameState()
 {
 	if(gameState=='place'){
-		gameState='slide'
+		gameState='sliding'
 	}else{
 		sliding=null;
 		gameState='place'
@@ -137,10 +151,11 @@ function notationToLocation(notation)
 	return { ring: notation.charCodeAt(0)-64  , hour: parseInt(notation.substring(1)) }   
 }
 
-function play(to) {
+function play(to,from) {
 		console.log(to);
         var data= {game:gameID,place:locationToNotation(to),color:turn,gameState:gameState} ;
-        if(gameState=='slide') {
+        if(gameState=='sliding') {
+        	if(from)sliding=from
             data['from']=locationToNotation(sliding); 
         }
         updateGameState();
@@ -166,6 +181,9 @@ function getLatestMove()
 					nextMove(moveQueue[0])
 				}
 			} 
+		}
+		if(moves[0].color!=yourcolor&&moves[0].from!=null){
+			yourturn();
 		}
 		console.log("latest Move",moves[0])
 	});
