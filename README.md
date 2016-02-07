@@ -14,7 +14,7 @@ Install
 - edit bot.js file with correct token
 - logout
 - register the user you will play as ( a seperate user from the bot ) at http://45.55.2.124/register
--
+
 Test
 - create New game , join as white
 - copy game id from url ( /game/55f390c5bc0010467ced9b6d/ , the game id is 55f390c5bc0010467ced9b6d )
