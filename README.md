@@ -9,7 +9,7 @@ Install
 - install Node https://nodejs.org/en/download/
 - go to terminal or commandline , cd into directory downloaded
 - npm install
-- register a user as a bot, fake email ok http://45.55.2.124/register
+- register a user as a bot, use a fake email address  http://45.55.2.124/register
 - visit http://45.55.2.124/botapi
 - edit bot.js file with correct token
 - logout
