@@ -35,4 +35,4 @@ You will get error messages if something is not correct. Currently, the validati
 
 Game ends when both players pass. Both plays must accept score and terrorities to have the game finalized.
 
-All the updates happen on the 'game' game. When you create a game or emit a get to /game/yourgame id you subscribe. this list describes the object you get on an update.  Take a look at the recieveUpdate to see how to properly retrieve information from the game as it comes in. 
+All the updates happen on the 'game' game. When you create a game or emit a get to /game/yourgame id you subscribe. this list describes the object you get on an update.  Take a look at the recieveUpdate function to see how to properly retrieve information from the game as it comes in. 
