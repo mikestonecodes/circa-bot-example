@@ -1,11 +1,11 @@
 
 //Settings ( find  your user token by browsing to  /botapi page )
 var token= ''
-var gameID = ''
+var auto_open_tab_mac=false;
+
+
+
 var joinAs='black'
-
-
-
 var colors={EMPTY:0,WHITE:1,BLACK:2}
 var yourcolor= (joinAs=='black')?2:1;
 
@@ -22,19 +22,12 @@ var moveQueue=[]; //A Queue is required so you get a response back from the serv
 
 
 
-begin(function(allmoves){
-	moveQueue=[	play({ring:3,hour:1}),pass() ]
-	//  moveQueue = [play({}) ,  {game:gameID,place:'A7',from:'A5',color:2,gamestate:'sliding'}  ]
-
-		if(allmoves.length==0){ // if no one made a move yet, make a new move 
-			startQueue();
-		}
-})
+begin(function(allmoves){});
 
 
 function yourturn(){
 	console.log("it is your turn!");
-	moveQueue=[	play({ring:2,hour:4}),play({ring:2,hour:1},{ring:3,hour:1})]
+	moveQueue=[	play({ring:2,hour:4}),play({ring:3,hour:4},{ring:2,hour:4}) ]
 	startQueue();
 	
 }
@@ -60,7 +53,7 @@ function recieveUpdate(snapshot)
         }
         if(snapshot.verb=='updated'&&snapshot.data.action=='userJoined'){
            console.log(snapshot.data.joinedUser.username+" joined!",snapshot.data);
-           
+           yourturn();
         }
         if(snapshot.verb=='updated'&&snapshot.data.action=='ending')
         {       
@@ -85,9 +78,16 @@ function recieveUpdate(snapshot)
 function begin(cb)
 {
 io.socket.get('/auth/bearer/authorize' , function(loggedInData) {
-		io.socket.post('/game/'+gameID+'/join/'+joinAs, function serverResponded (data) {
-			//logged in
-			io.socket.get('/game/'+gameID);	//this is required to start listening to events
+		io.socket.post('/game/create', function serverResponded (game) {
+			gameID=game.id;
+
+			if(auto_open_tab_mac){
+				var childProc = require('child_process');
+				childProc.exec('open -a "Google Chrome" '+io.sails.url+"/game/"+gameID+"/join/white");
+			}else{
+				console.log("visit "+io.sails.url+"/game/"+gameID+"/join/white"+" to join")
+			}
+			
 			io.socket.on('game', recieveUpdate.bind(this) );		
 				
 				io.socket.get('/game/'+gameID+"/moves", function (allmoves) { 	//gets all the moves so Far
